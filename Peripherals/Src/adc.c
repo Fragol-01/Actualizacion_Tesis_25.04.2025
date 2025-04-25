@@ -93,13 +93,13 @@ void adc_MIC_DMA_config(uint16_t *buffer, uint16_t size) {
     // Configurar la dirección de memoria (buffer)
     DMA1_Channel1->CMAR = (uint32_t)buffer;
     
-    // Configurar cantidad de datos a transferir (la mitad porque ahora cada valor ocupa 4 bytes)
-    DMA1_Channel1->CNDTR = size / 2;
+    // Configurar cantidad de datos a transferir
+    DMA1_Channel1->CNDTR = size;
     
     // Configurar DMA con la nueva configuración
     DMA1_Channel1->CCR = 0;
     DMA1_Channel1->CCR |= DMA_CCR_PSIZE_0  |  // Periférico: Half-word (16 bits)
-                          DMA_CCR_MSIZE_1  |  // Memoria: Word (32 bits) - CAMBIO AQUÍ
+                          DMA_CCR_MSIZE_0  |  // Memoria: Half-word (16 bits)
                           DMA_CCR_MINC     |  // Incremento automático de dirección de memoria
                           DMA_CCR_CIRC     |  // Modo circular
                           DMA_CCR_PL_1     |  // Alta prioridad

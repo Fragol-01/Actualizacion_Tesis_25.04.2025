@@ -8,6 +8,8 @@
 #include <main.h>
 #include <gpio.h>
 #include <spi.h>
+#include <i2c.h>
+#include "ds3231.h"
 #include <exti.h>
 #include "uart.h"
 #include "fatfs_sd.h"
@@ -20,9 +22,6 @@ volatile bool isFileCreated=false;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-void write_sector_test(void);
-bool configurar_sector_base(uint8_t frecuencia_khz, uint16_t sectores_por_fichero, uint16_t num_ficheros);
-
 
 int main (void)
 {
@@ -32,6 +31,9 @@ int main (void)
 	/* Configure the system clock */
 	SystemClock_Config();
 	/* Initialize all configured peripherals */
+	//I2C1 Config
+	i2c_I2C1_GPIO_Config();
+	i2c_I2C1_Config();
 	//GPIO LED Config
 	gpio_LED_config();
 	//USART COnfig
@@ -56,8 +58,8 @@ int main (void)
 		printf("Successfully Mounted SD card\r\n");
 
 		// Configurar el sector base
-		uint8_t frecuencia_khz = 48;                 // 48 kHz
-		uint16_t sectores_por_fichero = 45000;       // 45000 sectores para 2 minutos a 48 kHz
+		uint8_t frecuencia_khz = 96;                 // 48 kHz
+		uint16_t sectores_por_fichero = 45000;       // 22500 sectores para 2 minutos a 48 kHz
 		uint16_t num_ficheros = 0;                   // Se calculará automáticamente según el espacio disponible
 
 		if (configurar_sector_base(frecuencia_khz, sectores_por_fichero, num_ficheros)) {

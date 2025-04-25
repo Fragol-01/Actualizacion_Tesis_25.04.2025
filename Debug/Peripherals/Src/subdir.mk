@@ -8,6 +8,7 @@ C_SRCS += \
 ../Peripherals/Src/adc.c \
 ../Peripherals/Src/exti.c \
 ../Peripherals/Src/gpio.c \
+../Peripherals/Src/i2c.c \
 ../Peripherals/Src/opamp.c \
 ../Peripherals/Src/rcc.c \
 ../Peripherals/Src/spi.c \
@@ -18,6 +19,7 @@ OBJS += \
 ./Peripherals/Src/adc.o \
 ./Peripherals/Src/exti.o \
 ./Peripherals/Src/gpio.o \
+./Peripherals/Src/i2c.o \
 ./Peripherals/Src/opamp.o \
 ./Peripherals/Src/rcc.o \
 ./Peripherals/Src/spi.o \
@@ -28,6 +30,7 @@ C_DEPS += \
 ./Peripherals/Src/adc.d \
 ./Peripherals/Src/exti.d \
 ./Peripherals/Src/gpio.d \
+./Peripherals/Src/i2c.d \
 ./Peripherals/Src/opamp.d \
 ./Peripherals/Src/rcc.d \
 ./Peripherals/Src/spi.d \
@@ -42,7 +45,7 @@ Peripherals/Src/%.o Peripherals/Src/%.su Peripherals/Src/%.cyclo: ../Peripherals
 clean: clean-Peripherals-2f-Src
 
 clean-Peripherals-2f-Src:
-	-$(RM) ./Peripherals/Src/adc.cyclo ./Peripherals/Src/adc.d ./Peripherals/Src/adc.o ./Peripherals/Src/adc.su ./Peripherals/Src/exti.cyclo ./Peripherals/Src/exti.d ./Peripherals/Src/exti.o ./Peripherals/Src/exti.su ./Peripherals/Src/gpio.cyclo ./Peripherals/Src/gpio.d ./Peripherals/Src/gpio.o ./Peripherals/Src/gpio.su ./Peripherals/Src/opamp.cyclo ./Peripherals/Src/opamp.d ./Peripherals/Src/opamp.o ./Peripherals/Src/opamp.su ./Peripherals/Src/rcc.cyclo ./Peripherals/Src/rcc.d ./Peripherals/Src/rcc.o ./Peripherals/Src/rcc.su ./Peripherals/Src/spi.cyclo ./Peripherals/Src/spi.d ./Peripherals/Src/spi.o ./Peripherals/Src/spi.su ./Peripherals/Src/tim.cyclo ./Peripherals/Src/tim.d ./Peripherals/Src/tim.o ./Peripherals/Src/tim.su ./Peripherals/Src/uart.cyclo ./Peripherals/Src/uart.d ./Peripherals/Src/uart.o ./Peripherals/Src/uart.su
+	-$(RM) ./Peripherals/Src/adc.cyclo ./Peripherals/Src/adc.d ./Peripherals/Src/adc.o ./Peripherals/Src/adc.su ./Peripherals/Src/exti.cyclo ./Peripherals/Src/exti.d ./Peripherals/Src/exti.o ./Peripherals/Src/exti.su ./Peripherals/Src/gpio.cyclo ./Peripherals/Src/gpio.d ./Peripherals/Src/gpio.o ./Peripherals/Src/gpio.su ./Peripherals/Src/i2c.cyclo ./Peripherals/Src/i2c.d ./Peripherals/Src/i2c.o ./Peripherals/Src/i2c.su ./Peripherals/Src/opamp.cyclo ./Peripherals/Src/opamp.d ./Peripherals/Src/opamp.o ./Peripherals/Src/opamp.su ./Peripherals/Src/rcc.cyclo ./Peripherals/Src/rcc.d ./Peripherals/Src/rcc.o ./Peripherals/Src/rcc.su ./Peripherals/Src/spi.cyclo ./Peripherals/Src/spi.d ./Peripherals/Src/spi.o ./Peripherals/Src/spi.su ./Peripherals/Src/tim.cyclo ./Peripherals/Src/tim.d ./Peripherals/Src/tim.o ./Peripherals/Src/tim.su ./Peripherals/Src/uart.cyclo ./Peripherals/Src/uart.d ./Peripherals/Src/uart.o ./Peripherals/Src/uart.su
 
 .PHONY: clean-Peripherals-2f-Src
 

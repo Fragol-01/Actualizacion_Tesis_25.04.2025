@@ -1,0 +1,7 @@
+../Core/Src/ds3231.c:12:6:DS3231_Set_Date_Time	32	static
+../Core/Src/ds3231.c:30:6:DS3231_Get_Date	24	static
+../Core/Src/ds3231.c:41:6:DS3231_Get_Time	24	static
+../Core/Src/ds3231.c:51:6:DS3231_Get_DayOfWeek	32	static
+../Core/Src/ds3231.c:68:9:DS3231_Read	24	static
+../Core/Src/ds3231.c:79:9:DS3231_Bin_Bcd	24	static
+../Core/Src/ds3231.c:101:9:DS3231_Bcd_Bin	24	static

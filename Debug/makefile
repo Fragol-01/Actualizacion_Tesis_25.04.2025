@@ -13,7 +13,6 @@ RM := rm -rf
 -include Drivers/STM32L4xx_HAL_Driver/Src/subdir.mk
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
--include Applications/WAV_Recorder/subdir.mk
 -include Applications/SD/subdir.mk
 -include objects.mk
 

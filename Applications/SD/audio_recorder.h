@@ -10,7 +10,7 @@
 #include <stdbool.h>
 
 
-#define AUDIO_BUFFER_SIZE 4096
+#define AUDIO_BUFFER_SIZE 4096 //4096
 
 // Flag para indicar si la memoria está llena
 extern volatile bool memoriaLlena; // Debe ser volatile en ambos lugares

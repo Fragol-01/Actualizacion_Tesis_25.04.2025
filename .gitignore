@@ -1,0 +1,49 @@
+# STM32CubeIDE specific
+.metadata/
+.settings/
+Debug/
+Release/
+*.launch
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.map
+*.list
+
+# Generated output files
+*.d
+
+# Backup files
+*~
+*.bak
+*.swp

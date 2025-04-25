@@ -1,0 +1,68 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 12
+skinparam shadowing false
+skinparam ArrowThickness 1.5
+
+skinparam Rectangle {
+    BorderColor #2E5C8A
+    BackgroundColor #F7F7F7
+    RoundCorner 15
+    BorderThickness 1.5
+}
+
+title **<color:#2E5C8A>Diagrama de Arquitectura del Sistema de Grabación de Audio**\n<size:12>STM32L4 - Hardware & Firmware</size>
+
+left to right direction
+
+package "Entrada del Usuario" #ECF0F1 {
+    rectangle "Botón Físico\n(GPIO con EXTI)" as BOTON #FFE6CC
+    rectangle "IRQ Handler\n(EXTI)" as EXTI #FFE6CC
+    BOTON -[#E74C3C]> EXTI : "Presión detectada" 
+}
+
+package "Núcleo de Control" #ECF0F1 {
+    rectangle "Máquina de Estados\nPrincipal" as CONTROL #FFE6CC
+    EXTI -[#E74C3C]-> CONTROL : "Evento de usuario"
+}
+
+package "Adquisición" #ECF0F1 {
+    rectangle "TIM6\nTimer 48kHz" as TIMER #E6F3FF
+    rectangle "ADC1\nConversión A/D" as ADC #E6F3FF
+    rectangle "DMA\nDoble Buffer" as DMA #E6F3FF
+    
+    CONTROL -[#E74C3C]> TIMER : "Start/Stop"
+    TIMER -[#4A90E2]> ADC : "Trigger" 
+    ADC -[#4A90E2]> DMA : "Muestras\n(12-bit)"
+}
+
+package "Almacenamiento" #ECF0F1 {
+    rectangle "Lógica de Grabación\naudio_recorder.c" as LOGICA #FFFFFF
+    rectangle "SD Card\nSPI" as SD #FFFFFF
+    rectangle "Sector 0\nMetadatos" as METADATOS #FFFFFF
+    
+    DMA -[#4A90E2]-> LOGICA : "Buffer listo"
+    LOGICA -[#4A90E2]> SD : "Escritura\n8 sectores" 
+    SD -[#4A90E2]> METADATOS : "Actualización" 
+}
+
+legend bottom
+<color:#2E5C8A>**Leyenda**
+|                Color          | Tipo de elemento      |
+|<color:#F7A855> Naranja claro  | Control del sistema   |
+|<color:#97C6F3> azul claro     | Hardware crítico      |
+| Blanco                        | Almacenamiento        |
+|<color:#4A90E2> Azul oscuro    | Flujo de datos        |
+|<color:#E74C3C> Rojo           | Señales de control    |
+endlegend
+@enduml
+
+Quiero que me digas que colores son los siguientes valores en hexadecimal
+
+| Color          | Tipo de elemento      |
+|rgb(247, 168, 85)        | Control del sistema   |
+|rgb(151, 198, 243)        | Hardware crítico      |
+| #FFFFFF        | Almacenamiento        |
+|rgb(74, 144, 226) →      | Flujo de datos        |
+|rgb(231, 76, 60) →      | Señales de control    |

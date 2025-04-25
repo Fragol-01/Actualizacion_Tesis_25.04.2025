@@ -1,0 +1,73 @@
+@startuml
+skinparam backgroundColor #EEEBDC
+skinparam activity {
+  BackgroundColor White
+  BorderColor DarkGray
+  FontName Arial
+}
+title Diagrama de flujo del firmware del registrador de datos (v2 corregido)
+
+start
+:Inicialización del sistema;
+
+if (¿SD montada?) then (Sí)
+  :Mostrar "SD inicializada OK";
+  :Configurar sector base SD;
+  :Inicializar grabador de audio;
+
+  if (¿Espacio suficiente?) then (Sí)
+    :memoriaLlena = false;
+  else (No)
+    :memoriaLlena = true;
+  endif
+
+else (No)
+  :Mostrar "Error SD";
+  stop
+endif
+
+repeat
+  while (Bucle principal) is (Activo)
+    if (Botón presionado?) then (Sí)
+      if (¿Grabando?) then (No)
+        if (¿memoriaLlena?) then (Sí)
+          :Mostrar "SD llena";
+        else (No)
+          :audio_recorder_start();
+          :Estado = GRABANDO;
+        endif
+      else (Sí)
+        :audio_recorder_stop();
+        if (¿memoriaLlena?) then (Sí)
+          :Estado = DETENIDO;
+        else (No)
+          :Estado = GRABANDO;
+        endif
+      endif
+    endif
+
+    if (¿Estado == GRABANDO?) then (Sí)
+      :audio_recorder_process();
+      if (halfBufferReady) then (Sí)
+        :Escribir 8 sectores;
+        :Actualizar contadores;
+        :Limpiar halfBufferReady;
+      endif
+      if (fullBufferReady) then (Sí)
+        :Escribir 8 sectores;
+        :Actualizar contadores;
+        :Limpiar fullBufferReady;
+      endif
+      if (¿45000 sectores? || ¿SD llena?) then (Sí)
+        :audio_recorder_stop();
+        if (¿SD llena?) then (Sí)
+          :Mostrar "SD llena";
+        else (No)
+          :Mostrar "Grabación completada";
+        endif
+      endif
+    else (No)
+      :Parpadear LED verde;
+    endif
+  endwhile
+@enduml

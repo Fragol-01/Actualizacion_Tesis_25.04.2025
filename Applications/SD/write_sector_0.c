@@ -18,12 +18,12 @@ Cálculo de muestras totales:
 48000 muestras/segundo × 60 segundos/minuto × 2 minutos = 5760000 muestras
 
 Cálculo de bytes totales:
-Cada muestra usa 4 bytes (32 bits para ADC->DR con resolución de 12 bits)
-5760000 muestras × 4 bytes/muestra = 23040000  bytes
+Cada muestra usa 2 bytes (16 bits para ADC->DR con resolución de 12 bits)
+5760000 muestras × 2 bytes/muestra = 11520000  bytes
 
 Cálculo de sectores necesarios:
 Cada sector es de 512 bytes (definido por la SD)
-23040000 bytes ÷ 512 bytes/sector = 45000 sectores
+11520000 bytes ÷ 512 bytes/sector = 22500 sectores
  */
 
 bool configurar_sector_base(uint8_t frecuencia_khz, uint16_t sectores_por_fichero, uint16_t num_ficheros) {

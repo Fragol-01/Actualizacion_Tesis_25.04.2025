@@ -52,7 +52,7 @@
 //		printf("Successfully Mounted SD card\r\n");
 //
 //		// Opción 1: Borrar solo los primeros sectores (más rápido)
-//		borrar_sectores(50000, 100000); // Borra los primeros 9110 sectores
+//		borrar_sectores(0, 50000); // Borra los primeros 9110 sectores
 //
 //		//		// Opción 2: Borrar todos los sectores que se usarán (más lento)
 //		//		// Calcular cuántos sectores se necesitan para todos los archivos

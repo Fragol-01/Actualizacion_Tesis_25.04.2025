@@ -1,10 +1,18 @@
+/*
+ * i2c.c
+ *
+ *  Created on: 23 abr. 2025
+ *      Author: DANNY
+ */
+
 #include "audio_recorder.h"
 #include <string.h>
 #include <stdio.h>
+#include "ds3231.h"
 #include "opamp.h"
 
 // Buffer de audio para el DMA (recibe datos de 16 bits del ADC)
-volatile static uint32_t audioBuffer[AUDIO_BUFFER_SIZE/2]; // 2048 elementos de 32 bits = 8192 bytes
+volatile static uint16_t audioBuffer[AUDIO_BUFFER_SIZE]; // 4096 elementos de 16 bits = 8192 bytes/512 bytes = 16 sectores
 
 // Control de estado
 volatile static RecorderState recorderState = RECORDER_IDLE;
@@ -29,7 +37,7 @@ volatile uint32_t fullBuffersLost = 0;
 bool audio_recorder_init(void) {
     // Configurar el ADC y el DMA para la captura
     tim_TIM6_MIC_config(); // Configura el timer para muestreo a 48kHz
-    opamp_config();        // Configura el OPAMP para el micrófono PA0->A0
+//    opamp_config();        // Configura el OPAMP para el micrófono PA0->A0
     adc_MIC_config();      // Configura el ADC
     
     // Obtener valores del sector base
@@ -113,8 +121,8 @@ bool audio_recorder_start(void) {
         return false;
     }
 
-    // Crear un buffer temporal para los primeros 4 sectores (combina metadatos + datos)
-    uint8_t primerSector[2048]; // 4 sectores = 2048 bytes
+    // Crear un buffer temporal para los primeros 8 sectores (combina metadatos + datos)
+    uint8_t primerSector[AUDIO_BUFFER_SIZE]; // 8 sectores = 4096 bytes
     memset(primerSector, 0, sizeof(primerSector));
 
     // Primeros 12 bytes: metadatos del archivo
@@ -131,10 +139,10 @@ bool audio_recorder_start(void) {
     // bytes 10-11 quedan en 0
     
     // A partir del byte 12, copiar datos del buffer de audio (2036 bytes)
-    memcpy(primerSector + 12, (const void*)audioBuffer, 2048 - 12);
+    memcpy(primerSector + 12, (const void*)audioBuffer, AUDIO_BUFFER_SIZE - 12);
     
-    // Escribir estos 4 sectores combinados
-    DRESULT write_result = SD_disk_write(0, primerSector, sectorPrincipalActual, 4);
+    // Escribir estos 8 sectores combinados
+    DRESULT write_result = SD_disk_write(0, primerSector, sectorPrincipalActual, 8);
     if (write_result != RES_OK) {
         printf("Error al escribir sector principal+datos: %d\r\n", write_result);
         TIM6->CR1 &= ~(TIM_CR1_CEN);
@@ -145,8 +153,8 @@ bool audio_recorder_start(void) {
     
     // Marcar que usamos parte del buffer y avanzar al siguiente sector
     halfBufferReady = false; // Ya usamos estos datos
-    currentSector += 4;      // Avanzar 4 sectores
-    sectoresGrabados += 4;   // Incrementar contador - Ya grabamos 4 sectores
+    currentSector += 8;      // Avanzar 8 sectores
+    sectoresGrabados += 8;   // Incrementar contador - Ya grabamos 8 sectores
     
     printf("Grabacion iniciada - Archivo #%d\r\n", currentFileIndex);
     return true;
@@ -194,7 +202,7 @@ void audio_recorder_stop(void) {
                 buffer[4] = (currentFileIndex >> 8) & 0xFF;
 
                 // Calcular sector del próximo archivo
-                uint32_t sector_counter = 1 + (currentFileIndex * 45000);
+                uint32_t sector_counter = 1 + (currentFileIndex * 22500);
                 buffer[8] = sector_counter & 0xFF;
                 buffer[9] = (sector_counter >> 8) & 0xFF;
                 buffer[10] = (sector_counter >> 16) & 0xFF;
@@ -238,13 +246,13 @@ void audio_recorder_process(void) {
     if (recorderState == RECORDER_RECORDING) {
         // Procesar la primera mitad del buffer si está lista
         if (halfBufferReady) {
-            // Escribir 4 sectores en una sola operación (2048 bytes)
+            // Escribir 8 sectores en una sola operación (4096 bytes)
             uint8_t* writeBuffer = (uint8_t*)&audioBuffer[0];
-            DRESULT write_result = SD_disk_write(0, writeBuffer, currentSector, 4);
+            DRESULT write_result = SD_disk_write(0, writeBuffer, currentSector, 8);
             
             if (write_result == RES_OK) {
-                currentSector += 4;         // Avanzar 4 sectores
-                sectoresGrabados += 4;      // Incrementar contador total
+                currentSector += 8;         // Avanzar 8 sectores
+                sectoresGrabados += 8;      // Incrementar contador total
                 halfBufferReady = false;
                 
                 // Si alcanzamos el límite de sectores para un archivo
@@ -259,14 +267,14 @@ void audio_recorder_process(void) {
         
         // Procesar la segunda mitad del buffer si está lista
         if (fullBufferReady) {
-            // Escribir 4 sectores en una sola operación (2048 bytes)
-            // El offset es 512 bytes (128 valores de 32 bits) después del primer bloque de 4 sectores
-            uint8_t* writeBuffer = (uint8_t*)&audioBuffer[512];
-            DRESULT write_result = SD_disk_write(0, writeBuffer, currentSector, 4);
+            // Escribir 8 sectores en una sola operación (4096 bytes)
+            // El offset es 1024 valores de 16 bits (2048 bytes) después del primer bloque de 8 sectores
+            uint8_t* writeBuffer = (uint8_t*)&audioBuffer[2048];
+            DRESULT write_result = SD_disk_write(0, writeBuffer, currentSector, 8);
             
             if (write_result == RES_OK) {
-                currentSector += 4;
-                sectoresGrabados += 4;
+                currentSector += 8;
+                sectoresGrabados += 8;
                 fullBufferReady = false;
                 
                 if (sectoresGrabados >= 45000) {

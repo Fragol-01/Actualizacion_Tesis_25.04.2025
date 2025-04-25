@@ -24,7 +24,7 @@ void tim_TIM6_MIC_config(void)
 	//f=44.1kHz
 	TIM6->PSC = 0;//Keep APB clock Frequency
 	//Period
-	TIM6->ARR=750-1;//72MHz/750= 96kHz
+	TIM6->ARR=791-1;//76MHz/1583.3= 48kHz
 	//Update register on event
 	TIM6->EGR=1;
 //	//Start timer
